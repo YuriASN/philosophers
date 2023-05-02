@@ -1,4 +1,3 @@
-
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -8,7 +7,6 @@
 # include <stdio.h>
 # include <sys/time.h>
 # include <stdlib.h>
-
 
 typedef struct s_philo
 {
@@ -31,7 +29,7 @@ typedef struct s_data
 	pthread_mutex_t	*fork;
 }	t_data;
 
-
+void	*ft_calloc(size_t number, size_t size);
 
 void	data_init(char **argv, int argc, t_data *data);
 void	*start_thread(void *data);
