@@ -8,10 +8,20 @@ void	*start_thread(void *pt)
 	t_data	*data;
 
 	data = pt;
-	printf("Locking philo nº %ld.\n", data->i + 1);
-	pthread_mutex_lock(&data->fork[data->i]);
-	printf("mutex %ld locked.\n", data->i +1);
-	pthread_mutex_unlock(&data->fork[data->i]);
-	printf("mutex %ld unlocked.\n", data->i +1);
+	while (1)
+	{
+		pthread_mutex_lock(&data->fork[data->i]);
+		if (data->i == 0)
+			pthread_mutex_lock(&data->fork[data->total - 1]);
+		else
+			pthread_mutex_lock(&data->fork[data->i - 1]);
+		printf("%ldms %ld is eating.\n", data->curr_time, data->i +1);
+		usleep(data->eat_time);
+		pthread_mutex_unlock(&data->fork[data->i]);
+		if (data->i == 0)
+			pthread_mutex_unlock(&data->fork[data->total - 1]);
+		else
+			pthread_mutex_unlock(&data->fork[data->i - 1]);
+	}
 	return (0);
 }

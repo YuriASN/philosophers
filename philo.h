@@ -10,8 +10,12 @@
 
 typedef struct s_philo
 {
+	ssize_t			pos;
 	ssize_t			last_eat;
 	ssize_t			last_sleep;
+	ssize_t			eat_count;
+	ssize_t			fork_m;
+	ssize_t			fork_l;
 	struct s_data	*data;
 }	t_philo;
 
