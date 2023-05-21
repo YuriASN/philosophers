@@ -7,7 +7,7 @@ SRC = *.c
 all: $(NAME)
 
 $(NAME):
-	@$(CC) $(FLAGS) -g -fsanitize=address $(SRC) -o $(NAME)
+	@$(CC) $(FLAGS) -g $(SRC) -o $(NAME)
 	@echo "\033[95mPhilosophers compiled!\033[m"
 
 clean:

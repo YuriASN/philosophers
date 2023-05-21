@@ -3,25 +3,31 @@
 /* Boolean checks if philo is dead. And if already eaten the maximum. */
 static void	*is_alive(void *pnt)
 {	
-	t_data	*data;
+	t_philo	*philo;
 	ssize_t	now;
 
-	data = (t_data *)pnt;
+	philo = (t_philo *)pnt;
 	while (1)
 	{
-		now = time_now(data);
-		if (data->max_eat && data->max_eat == data->philo[data->i].eat_count)
-			philo_dead("Reached maximum eat times.\n", data);
-		if (now > data->philo[data->i].will_die)
+		pthread_mutex_lock(&philo->data->alive);
+		now = time_now(NULL);
+		if (philo->data->max_eat && philo->max_eat == philo->eat_count)
 		{
-			data->all_alive = 0;
-			msg_go(data, DIED, now, data->i + 1);
-printf("philo %ld, now = %ld, will_die =%ld\n", data->i + 1, now, data->philo[data->i].will_die);
-			philo_dead(NULL, data);
+			msg_go(philo->data, EATMAX, now, philo->nbr);
+			philo->data->all_alive = 0;
+			break ;
 		}
-		usleep(990);
+		else if (now > philo->will_die)
+		{
+			msg_go(philo->data, DIED, now, philo->nbr);
+			philo->data->all_alive = 0;
+			break ;
+		}
+		usleep(500);
+		pthread_mutex_unlock(&philo->data->alive);
 	}
-	return(NULL);
+	pthread_mutex_unlock(&philo->data->alive);
+	return (NULL);
 }
 
 /* Lock mutex of both philos. */
@@ -36,19 +42,15 @@ static void	grab_forks(t_data *data, size_t prev, t_philo *philo)
 /* Eat the food and unlock philo's mutex.*/
 static void	philo_eat(t_data *data, size_t prev, t_philo *philo)
 {
-//	philo->fork = 0;
-//	data->philo[prev].fork = 0;
 	philo->last_eat = time_now(data);
 	philo->will_die = philo->last_eat + data->die_time;
 	msg_go(data, EAT, philo->last_eat, philo->nbr);
 	usleep(data->eat_time * 1000);
-printf("%spassou u sleep%s\n", BLU, CRESET);
+//printf("%spassou u sleep%s\n", BLU, CRESET);
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->mutex);
 	pthread_mutex_unlock(&data->philo[prev].mutex);
-printf("%ldms philo %ld let go forks\n", time_now(data), philo->nbr);
-//	philo->fork = 1;
-//	data->philo[prev].fork = 1;
+//printf("%s%ldms philo %ld let go forks%s\n", RED, time_now(data), philo->nbr, CRESET);
 }
 
 static void	philo_sleep(t_data *data, t_philo *philo)
@@ -67,14 +69,13 @@ void	*start_thread(void *pt)
 	pthread_t	tid;
 
 	data = pt;
-printf("%screated philo n %ld%s\n", YEL, data->i + 1, CRESET);
+//printf("%screated philo n %ld%s\n", YEL, data->i + 1, CRESET);
 	pos = data->i;
 	prev = pos -1;
 	if (pos == 0)
 		prev = data->total - 1;
-	usleep(100);
-	if(pthread_create(&tid, NULL, &is_alive, (void *)data))
-		philo_dead(NULL, data);
+	if (pthread_create(&tid, NULL, &is_alive, (void *)&data->philo[pos]))
+		philo_dead("Fail to create is_alive threads\n", data);
 	pthread_detach(tid);
 	while (data->all_alive)
 	{
@@ -82,6 +83,7 @@ printf("%screated philo n %ld%s\n", YEL, data->i + 1, CRESET);
 		philo_eat(data, prev, &data->philo[pos]);
 		philo_sleep(data, &data->philo[pos]);
 	}
-printf("got out of while\n");
+	//pthread_mutex_unlock(&data->alive);
+	//pthread_mutex_unlock(&data->msg);
 	return (0);
 }

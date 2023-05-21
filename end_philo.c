@@ -3,19 +3,15 @@
 /* Finishes the programs freeing everything */
 void	end_philo(char *str, t_data *data)
 {
-	int	i;
-
-	i = -1;
+//printf("end_philo\n");
 	if (data)
 	{
-		if (data->fork)
-			while (++i < data->total)
-				pthread_mutex_destroy(&data->fork[i]);
 		if (data->philo)
 			free(data->philo);
 		free(data);
 	}
-	printf("%s", str);
+	if (str)
+		printf("%s", str);
 	exit (1);
 }
 
@@ -24,10 +20,15 @@ void	end_philo(char *str, t_data *data)
 void	philo_dead(char *str, t_data *data)
 {
 	int	i;
+static int x = 0; printf("\nphilo dead called %d time(s)\n\n", ++x);
 
 	i = -1;
-	while (++i < data->total)
-		if (pthread_join(data->thread[data->i], NULL) != 0)
-			printf("Thread %ld wasn't able to join.\n", data->i);
+	while (++i < (int)data->total)
+		pthread_mutex_destroy(&data->philo[i].mutex);
+//	usleep(200);
+	pthread_mutex_unlock(&data->msg);
+	pthread_mutex_destroy(&data->msg);
+	pthread_mutex_destroy(&data->time);
+	pthread_mutex_destroy(&data->alive);
 	end_philo(str, data);
 }

@@ -34,13 +34,15 @@ static void	init_philo(t_data *data)
 {
 	ssize_t	i;
 
-	i = -1;
-	while (++i < data->total)
+	i = 0;
+	while (i < data->total)
 	{
-		pthread_mutex_init(&data->fork[i], NULL);
-		data->philo[i].pos = i;
+		data->philo[i].nbr = i + 1;
+		pthread_mutex_init(&data->philo[i].mutex, NULL);
 		data->philo[i].data = data;
-		data->philo[i].fork_m = 1;
+		data->philo[i].will_die = data->die_time;
+		data->philo[i].max_eat = data->max_eat;
+		++i;
 	}
 }
 
@@ -48,23 +50,24 @@ static void	init_philo(t_data *data)
 	if max_eat == -1 it means that the argument wasn't passed*/
 void	data_init(char **argv, int argc, t_data *data)
 {
+	data->all_alive = 1;
 	data->total = ft_atoi(argv[1]);
 	data->eat_time = ft_atoi(argv[3]);
 	data->sleep_time = ft_atoi(argv[4]);
 	data->die_time = ft_atoi(argv[2]);
+//printf("eat = %d, sleep = %d, die = %d.\n", data->eat_time, data->sleep_time, data->die_time);
 	if (argc == 6)
 		data->max_eat = ft_atoi(argv[5]);
 	data->philo = 0;
-	data->fork = 0;
 	data->thread = 0;
-	data->philo = ft_calloc(sizeof(*(data->philo)), data->total);
+	pthread_mutex_init(&data->time, NULL);
+	pthread_mutex_init(&data->msg, NULL);
+	pthread_mutex_init(&data->alive, NULL);
+	data->philo = ft_calloc(sizeof(*(data->philo)), data->total + 1);
 	if (!data->philo)
 		end_philo("Failed to malloc data->philo!\n", data);
 	data->thread = ft_calloc(sizeof(pthread_t *), data->total);
 	if (!data->thread)
 		end_philo("Malloc of threads failed!\n", data);
-	data->fork = ft_calloc(sizeof(pthread_mutex_t *), data->total);
-	if (!data->fork)
-		end_philo("Malloc of forks failed!\n", data);
 	init_philo(data);
 }
