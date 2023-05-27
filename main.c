@@ -21,8 +21,8 @@ static int	args_are_digit(char **argv, int argc)
 
 int	main(int argc, char **argv)
 {
-	t_data			*data;
-	struct timeval	time;
+	t_data	*data;
+	int		i;
 
 	if ((argc != 5 && argc != 6) || !args_are_digit(argv, argc))
 		end_philo("Arguments are invalid!\n", NULL);
@@ -30,21 +30,19 @@ int	main(int argc, char **argv)
 	if (!data)
 		end_philo("Malloc of data struct failed!\n", NULL);
 	data_init(argv, argc, data);
-printf("%sData init done, press enter to creat threads...%s\n", RED, CRESET); getchar();
-	gettimeofday(&time, NULL);
-	data->boot_time = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-	data->i = -1;
-	while (++data->i < data->total)
+	i = -1;
+	while (++i < data->total)
 	{
-		if (pthread_create(&data->thread[data->i], NULL, &start_thread, (void *)data))
+		if (pthread_create(&data->thread[i], NULL,
+				&start_thread, (void *)&data->philo[i]))
 			philo_dead("Wasn't able to create thread.\n", data);
 		usleep(200);
 	}
-	while (--data->i >= 0)
+	while (--i >= 0)
 	{
-		if (pthread_join(data->thread[data->i], NULL))
+		if (pthread_join(data->thread[i], NULL))
 			printf("Wasn't able to join thread in main.\n");
-		pthread_mutex_destroy(&data->philo[data->i].mutex);
+		pthread_mutex_destroy(&data->philo[i].mutex);
 	}
 	philo_dead(NULL, data);
 printf("%sta fechando no main caralho!%s\n", MAG, CRESET);

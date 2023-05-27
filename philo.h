@@ -27,7 +27,7 @@
 
 typedef struct s_philo
 {
-	ssize_t			nbr;
+	ssize_t			i;
 	int				last_eat;
 	int				last_sleep;
 	int				will_die;
@@ -44,10 +44,10 @@ typedef struct s_data
 	pthread_mutex_t	time;
 	pthread_mutex_t	msg;
 	pthread_mutex_t	alive;
+	int				all_eaten;
 	int				all_alive;
 	int				boot_time;
 	int				now;
-	ssize_t			i;
 	ssize_t			total;
 	int				eat_time;
 	int				sleep_time;

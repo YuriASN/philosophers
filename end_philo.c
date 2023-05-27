@@ -3,11 +3,12 @@
 /* Finishes the programs freeing everything */
 void	end_philo(char *str, t_data *data)
 {
-//printf("end_philo\n");
 	if (data)
 	{
 		if (data->philo)
 			free(data->philo);
+		if (data->thread)
+			free(data->thread);
 		free(data);
 	}
 	if (str)
@@ -20,13 +21,10 @@ void	end_philo(char *str, t_data *data)
 void	philo_dead(char *str, t_data *data)
 {
 	int	i;
-static int x = 0; printf("\nphilo dead called %d time(s)\n\n", ++x);
 
 	i = -1;
 	while (++i < (int)data->total)
 		pthread_mutex_destroy(&data->philo[i].mutex);
-//	usleep(200);
-	pthread_mutex_unlock(&data->msg);
 	pthread_mutex_destroy(&data->msg);
 	pthread_mutex_destroy(&data->time);
 	pthread_mutex_destroy(&data->alive);

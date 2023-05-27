@@ -36,24 +36,20 @@ void	*ft_calloc(size_t number, size_t size)
 size_t	time_now(t_data *data)
 {
 	int				now;
-	static int		boot;
 	struct timeval	time;
 
-	if (!boot)
+	pthread_mutex_lock(&data->time);
+	if (!data->boot_time)
 	{
 		gettimeofday(&time, NULL);
-		boot = ((time.tv_sec * 1000) + (time.tv_usec / 1000));
-		data->boot_time = boot;
-		return ((size_t)boot);
+		data->boot_time = ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+		pthread_mutex_unlock(&data->time);
+		return (0);
 	}
-	if (data)
-		pthread_mutex_lock(&data->time);
 	gettimeofday(&time, NULL);
 	now = ((time.tv_sec * 1000) + (time.tv_usec / 1000));
-	now -= boot;
-	if (data)
-		pthread_mutex_unlock(&data->time);
-//printf("%snow = %ld%s\n", GRN, now, CRESET);
+	now -= data->boot_time;
+	pthread_mutex_unlock(&data->time);
 	return ((size_t)now);
 }
 
@@ -65,17 +61,17 @@ void	msg_go(t_data *data, int msg, ssize_t time, ssize_t philo)
 	{
 		if (msg == DIED)
 		{
+			data->all_alive = 0;
 			printf("%s%ldms %ld died%s\n", GRN, time, philo, CRESET);
 			pthread_mutex_unlock(&data->alive);
-	//		return ;
 		}
 		else if (msg == EATMAX)
 		{
-			printf("%s%ldms %ld eaten %ld times.%s\n", GRN, time, philo, data->philo[philo -1].eat_count, CRESET);
+			data->all_alive = 0;
+			printf("%ldms Philos have eaten %d times.\n", time, data->all_eaten);
 			pthread_mutex_unlock(&data->alive);
-	//		return ;
 		}
-		if (msg == EAT)
+		else if (msg == EAT)
 			printf("%ldms %ld is %seating%s\n", time, philo, YEL, CRESET);
 		else if (msg == SLEEP)
 			printf("%ldms %ld is %ssleeping%s\n", time, philo, GRN, CRESET);
