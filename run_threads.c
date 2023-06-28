@@ -1,6 +1,6 @@
 #include "philo.h"
 
-/* Boolean checks if philo is dead. And if already eaten the maximum. */
+/* Checks if philo is dead. And if already eaten the maximum. */
 static void	*is_alive(void *pnt)
 {	
 	t_philo	*philo;
@@ -71,24 +71,28 @@ static void	philo_sleep(t_data *data, t_philo *philo)
 /* Start the threads and attibutes times for everythig. */
 void	*start_thread(void *pt)
 {
-	size_t		pos;
 	ssize_t		prev;
 	t_philo		*philo;
 	pthread_t	tid;
 
 	philo = pt;
-	pos = philo->i;
-	prev = pos -1;
-	if (pos == 0)
+	prev = philo->i -1;
+	if (prev == -1)
 		prev = philo->data->total - 1;
 	if (pthread_create(&tid, NULL, &is_alive, (void *)philo))
 		philo_dead("Fail to create is_alive threads\n", philo->data);
-	pthread_detach(tid);
-	while (philo->data->all_alive)
+	while (1)
 	{
 		grab_forks(philo->data, prev, philo);
 		philo_eat(philo->data, prev, philo);
 		philo_sleep(philo->data, philo);
+		pthread_mutex_lock(&philo->data->alive);
+		if (!philo->data->all_alive)
+			break ;
+		pthread_mutex_unlock(&philo->data->alive);
 	}
+	pthread_mutex_unlock(&philo->data->alive);
+	if (pthread_join(tid, NULL))
+		printf("Wasn't able to join is_alive in philo %ld.\n", philo->i);
 	return (0);
 }

@@ -42,9 +42,7 @@ int	main(int argc, char **argv)
 	{
 		if (pthread_join(data->thread[i], NULL))
 			printf("Wasn't able to join thread in main.\n");
-		pthread_mutex_destroy(&data->philo[i].mutex);
 	}
 	philo_dead(NULL, data);
-printf("%sta fechando no main caralho!%s\n", MAG, CRESET);
 	return (0);
 }

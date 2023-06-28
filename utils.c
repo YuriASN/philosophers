@@ -63,13 +63,12 @@ void	msg_go(t_data *data, int msg, ssize_t time, ssize_t philo)
 		{
 			data->all_alive = 0;
 			printf("%s%ldms %ld died%s\n", GRN, time, philo, CRESET);
-			pthread_mutex_unlock(&data->alive);
 		}
 		else if (msg == EATMAX)
 		{
 			data->all_alive = 0;
-			printf("%ldms Philos have eaten %d times.\n", time, data->all_eaten);
-			pthread_mutex_unlock(&data->alive);
+			printf("%ldms Philos have eaten %ld times.\n",
+				time, data->all_eaten / data->total);
 		}
 		else if (msg == EAT)
 			printf("%ldms %ld is %seating%s\n", time, philo, YEL, CRESET);
