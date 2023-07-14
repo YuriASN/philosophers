@@ -38,6 +38,7 @@ static void	init_philo(t_data *data)
 	while (i < data->total)
 	{
 		data->philo[i].i = i;
+		data->philo[i].fork = 1;
 		pthread_mutex_init(&data->philo[i].mutex, NULL);
 		data->philo[i].data = data;
 		data->philo[i].will_die = data->die_time;

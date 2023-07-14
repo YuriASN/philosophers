@@ -31,6 +31,7 @@ typedef struct s_philo
 	int				last_eat;
 	int				last_sleep;
 	int				will_die;
+	int				fork;
 	ssize_t			eat_count;
 	ssize_t			max_eat;
 	pthread_mutex_t	mutex;
