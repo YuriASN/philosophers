@@ -61,6 +61,7 @@ void	msg_go(t_data *data, int msg, ssize_t time, ssize_t philo)
 	{
 		if (msg == DIED)
 		{
+			pthread_mutex_unlock(&data->philo[philo - 1].mutex);
 			data->all_alive = 0;
 			printf("%s%ldms %ld died%s\n", GRN, time, philo, CRESET);
 		}

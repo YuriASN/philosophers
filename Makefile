@@ -1,7 +1,7 @@
 NAME = philo
 
 CC = gcc
-FLAGS = -Wall -Wextra -Werror -pthread
+FLAGS = -Wall -Wextra -Werror -pthread -fsanitize=thread
 SRC = *.c
 
 all: $(NAME)
