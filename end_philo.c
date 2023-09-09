@@ -28,5 +28,6 @@ void	philo_dead(char *str, t_data *data)
 	pthread_mutex_destroy(&data->msg);
 	pthread_mutex_destroy(&data->time);
 	pthread_mutex_destroy(&data->alive);
+	pthread_mutex_destroy(&data->create);
 	end_philo(str, data);
 }

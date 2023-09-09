@@ -45,6 +45,7 @@ typedef struct s_data
 	pthread_mutex_t	time;
 	pthread_mutex_t	msg;
 	pthread_mutex_t	alive;
+	pthread_mutex_t	create;
 	int				all_eaten;
 	int				all_alive;
 	int				boot_time;

@@ -63,6 +63,7 @@ void	data_init(char **argv, int argc, t_data *data)
 	data->philo = 0;
 	data->thread = 0;
 	pthread_mutex_init(&data->time, NULL);
+	pthread_mutex_init(&data->create, NULL);
 	pthread_mutex_init(&data->msg, NULL);
 	pthread_mutex_init(&data->alive, NULL);
 	data->philo = ft_calloc(sizeof(*(data->philo)), data->total + 1);

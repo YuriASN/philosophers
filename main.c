@@ -19,13 +19,25 @@ static int	args_are_digit(char **argv, int argc)
 	return (1);
 }
 
+void	*sleep_kill(void *dt)
+{
+	t_data	*data;
+
+	data = dt;
+	usleep(data->die_time * 1000);
+	printf("%s%ldms 1 died%s\n", GRN, time_now(data), CRESET);
+	return (0);
+}
+
 /* Kill philosopher after time to die if there's only one of them */
 static void	only_one(t_data *data)
 {
-	time_now(data);
-	usleep(data->die_time * 1000);
-	printf("%s%ldms 1 died%s\n", GRN, time_now(data), CRESET);
-	end_philo(NULL, data);
+	if (pthread_create(&data->thread[0], NULL,
+			&sleep_kill, (void *)data))
+		philo_dead("Wasn't able to create thread.\n", data);
+	if (pthread_join(data->thread[0], NULL))
+		printf("Wasn't able to join thread in main.\n");
+	philo_dead(NULL, data);
 }
 
 static t_data	*start_data(int argc, char **argv)
@@ -52,9 +64,11 @@ int	main(int argc, char **argv)
 		only_one(data);
 	while (++i < data->total)
 	{
+		pthread_mutex_lock(&data->create);
 		if (pthread_create(&data->thread[i], NULL,
 				&start_thread, (void *)&data->philo[i]))
 			philo_dead("Wasn't able to create thread.\n", data);
+		pthread_mutex_unlock(&data->create);
 		usleep(200);
 	}
 	while (--i >= 0)

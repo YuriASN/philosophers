@@ -1,8 +1,8 @@
 NAME = philo
 
-CC = gcc
-FLAGS = -Wall -Wextra -Werror -pthread -fsanitize=thread
-SRC = *.c
+CC = cc
+FLAGS = -Wall -Wextra -Werror -pthread -g #-fsanitize=thread
+SRC = end_philo.c init.c main.c run_threads.c utils.c
 
 all: $(NAME)
 
