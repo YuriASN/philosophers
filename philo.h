@@ -57,6 +57,7 @@ typedef struct s_data
 	ssize_t			max_eat;
 }	t_data;
 
+void	should_think(t_data *data, t_philo *philo);
 void	*ft_calloc(size_t number, size_t size);
 void	msg_go(t_data *data, int msg, ssize_t time, ssize_t philo);
 size_t	time_now(t_data *data);

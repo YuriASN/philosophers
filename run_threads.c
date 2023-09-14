@@ -111,6 +111,7 @@ void	*start_thread(void *pt)
 	if (pthread_create(&tid, NULL, &is_alive, (void *)philo))
 		philo_dead("Fail to create is_alive threads\n", philo->data);
 	pthread_mutex_unlock(&philo->data->create);
+	should_think(philo->data, philo);
 	while (1)
 	{
 		grab_forks(philo->data, prev, philo);

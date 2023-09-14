@@ -1,5 +1,13 @@
 #include "philo.h"
 
+/* Checks if philo has to think before everything */
+void	should_think(t_data *data, t_philo *philo)
+{
+	if (philo->max_eat == 0 || philo->i % 2 != 0
+		|| (data->total % 2 && philo->i == data->total - 1))
+		msg_go(data, THINK, time_now(data), philo->i + 1);
+}
+
 /*The memset() function writes len bytes of value c (converted to an
 unsigned char) to the string dest. Undefined behaviour from memset(),
 resulting from storage overflow, will occur if len	is greater than	the
