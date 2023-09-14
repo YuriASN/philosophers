@@ -38,7 +38,8 @@ static void	init_philo(t_data *data)
 	while (i < data->total)
 	{
 		data->philo[i].i = i;
-		data->philo[i].fork = 1;
+		if (data->max_eat != 0)
+			data->philo[i].fork = 1;
 		pthread_mutex_init(&data->philo[i].mutex, NULL);
 		data->philo[i].data = data;
 		data->philo[i].will_die = data->die_time;
@@ -60,6 +61,8 @@ void	data_init(char **argv, int argc, t_data *data)
 		end_philo("Argument is 0 or bigger than int\n", data);
 	if (argc == 6)
 		data->max_eat = ft_atoi(argv[5]);
+	else
+		data->max_eat = -1;
 	data->philo = 0;
 	data->thread = 0;
 	pthread_mutex_init(&data->time, NULL);

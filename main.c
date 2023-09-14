@@ -25,6 +25,7 @@ void	*sleep_kill(void *dt)
 
 	data = dt;
 	time_now(data);
+	msg_go(data, THINK, time_now(data), 1);
 	usleep(data->die_time * 1000);
 	printf("%s%ldms 1 died%s\n", GRN, time_now(data), CRESET);
 	return (0);

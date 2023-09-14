@@ -15,7 +15,7 @@ static void	*is_alive(void *pnt)
 		if (!data->all_alive)
 			break ;
 		now = time_now(data);
-		if (data->max_eat
+		if (data->max_eat > 0
 			&& data->max_eat * data->total == data->all_eaten)
 			msg_go(data, EATMAX, now, philo->i + 1);
 		pthread_mutex_lock(&philo->mutex);
